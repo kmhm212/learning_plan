@@ -41,6 +41,41 @@ function findTaskByDate($date)
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
+function insertTask($title, $date) {
+    $dbh = connectDb();
+    $sql = <<<EOM
+    INSERT INTO
+        plans
+        (title, due_date)
+        VALUE
+        (:title, :date)
+    EOM;
+    $stmt = $dbh->prepare($sql);
+    $stmt->bindParam(':title', $title, PDO::PARAM_STR);
+    $stmt->bindParam(':date', $date, PDO::PARAM_STR);
+    $stmt->execute();
+}
+
+function insertValidate($title,$date) {
+    $errors = [];
+    if ($title == '') {
+        $errors[] = MSG_TITLE_REQUIRED;
+    }
+    if ($date == '') {
+        $errors[] = MSG_DATE_REQUIRED;
+    }
+    return $errors;
+}
+
+function createErrMsg($errors) {
+    $err_msg = "<ul>\n";
+    foreach ($errors as $err) {
+        $err_msg .= "<li>" . h($err) . "</li>\n";
+    }
+    $err_msg .= "</ul>\n";
+    return $err_msg;
+}
+
 function h($str)
 {
     return htmlspecialchars($str, ENT_QUOTES, 'UTF-8');
