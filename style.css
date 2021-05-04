@@ -134,6 +134,9 @@ th {
 .done-link-area, .edit-link-area, .delete-link-area {
     width: 6px;
 }
+.expired {
+    color: red;
+}
 
 @media (max-width: 800px) {
     .wrapper {

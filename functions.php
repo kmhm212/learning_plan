@@ -18,10 +18,9 @@ function connectDB()
     }
 }
 
-function findTaskByDate($date)
+function findPlanByDate($date)
 {
     $dbh = connectDb();
-
     $sql = <<<EOM
     SELECT
         *
@@ -30,12 +29,20 @@ function findTaskByDate($date)
     WHERE
         completion_date IS 
     EOM;
-
     if ($date == 'NULL') {
-        $sql .= 'NULL;';
+        $sql .= <<<EOM
+                NULL
+            ORDER BY
+                due_date ASC;
+            EOM;
     } else {
-        $sql .= 'NOT NULL;';
+        $sql .= <<<EOM
+                NOT NULL
+            ORDER BY
+                completion_date DESC;
+            EOM;
     }
+
     $stmt = $dbh->prepare($sql);
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -58,7 +65,7 @@ function findById ($id)
     return $stmt->fetch(PDO::FETCH_ASSOC);
 }
 
-function updateTask ($id, $title, $date)
+function updatePlan ($id, $title, $date)
 {
     $dbh = connectDb();
     $sql = <<<EOM
@@ -77,21 +84,23 @@ function updateTask ($id, $title, $date)
     $stmt->execute();
 }
 
-function updateValidate ($title, $date, $task) {
-        $errors = [];
+function updateValidate ($title, $date, $plan)
+{
+    $errors = [];
     if ($title == '') {
         $errors[] = MSG_TITLE_REQUIRED;
     }
     if ($date == '') {
         $errors[] = MSG_DATE_REQUIRED;
     }
-    if ($title == $task['title'] && $date == $task['due_date']) {
+    if ($title == $plan['title'] && $date == $plan['due_date']) {
         $errors[] = MSG_NO_CHANGE;
     }
     return $errors;
 }
 
-function insertTask($title, $date) {
+function insertPlan($title, $date)
+{
     $dbh = connectDb();
     $sql = <<<EOM
     INSERT INTO
@@ -106,7 +115,8 @@ function insertTask($title, $date) {
     $stmt->execute();
 }
 
-function insertValidate($title,$date) {
+function insertValidate($title, $date)
+{
     $errors = [];
     if ($title == '') {
         $errors[] = MSG_TITLE_REQUIRED;
@@ -117,13 +127,20 @@ function insertValidate($title,$date) {
     return $errors;
 }
 
-function createErrMsg($errors) {
+function createErrMsg($errors)
+{
     $err_msg = "<ul>\n";
     foreach ($errors as $err) {
         $err_msg .= "<li>" . h($err) . "</li>\n";
     }
     $err_msg .= "</ul>\n";
     return $err_msg;
+}
+
+function dateColor($plan) {
+    if($plan['due_date'] < date("Y-m-d")) {
+        echo 'class="expired"';
+    }
 }
 
 function h($str)

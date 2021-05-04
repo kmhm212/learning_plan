@@ -3,8 +3,8 @@
 require_once __DIR__ . '/functions.php';
 require_once __DIR__ . '/config.php';
 
-$notyet_tasks = findTaskByDate(TASK_DATE_NULL);
-$done_tasks = findTaskByDate(TASK_DATE_NOT_NULL);
+$notyet_plans = findPlanByDate(PLAN_DATE_NULL);
+$done_plans = findPlanByDate(PLAN_DATE_NOT_NULL);
 
 $title = '';
 $date = '';
@@ -14,7 +14,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $date = filter_input(INPUT_POST, 'due_date');
     $errors = insertValidate($title, $date);
     if (empty($errors)) {
-        insertTask($title, $date);
+        insertPlan($title, $date);
+        $title = '';
+        $date = '';
     }
 }
 
@@ -55,14 +57,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <tbody>
 
                     <!-- 未完了のデータを表示 -->
-                    <?php foreach($notyet_tasks as $task): ?>
+                    <?php foreach($notyet_plans as $plan): ?>
                         <tr>
-                            <td class="plan-title"><?= h($task['title']) ?></td>
-                            <td <?php if($task['due_date'] < date("Y-m-d")) echo ('style="color: red"')?>>
-                                <?= h(date("Y/m/d", strtotime($task['due_date']))) ?></td>
-                            <td><a href="done.php?id=<?= h($task['id'])?>" class="btn done-btn">完了</a></td>
-                            <td><a href="edit.php?id=<?= h($task['id'])?>" class="btn edit-btn">編集</a></td>
-                            <td><a href="delete.php?id=<?= h($task['id'])?>" class="btn delete-btn">削除</a></td>
+                            <td class="plan-title"><?= h($plan['title']) ?></td>
+                            <td <?php dateColor($plan) ?>>
+                                <?= h(date("Y/m/d", strtotime($plan['due_date']))) ?></td>
+                            <td><a href="done.php?id=<?= h($plan['id'])?>" class="btn done-btn">完了</a></td>
+                            <td><a href="edit.php?id=<?= h($plan['id'])?>" class="btn edit-btn">編集</a></td>
+                            <td><a href="delete.php?id=<?= h($plan['id'])?>" class="btn delete-btn">削除</a></td>
                         </tr>
                     <?php endforeach ?>
 
@@ -83,13 +85,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </thead>
                 <tbody>
                     <!-- 完了済のデータを表示 -->
-                    <?php foreach($done_tasks as $task): ?>
+                    <?php foreach($done_plans as $plan): ?>
                         <tr>
-                            <td class="plan-title"><?= h($task['title']) ?></td>
-                            <td><?= h(date("Y/m/d", strtotime($task['completion_date']))) ?></td>
-                            <td><a href="done.php?id=<?= h($task['id'])?>" class="btn not-done-btn">未完了</a></td>
-                            <td><a href="edit.php?id=<?= h($task['id'])?>" class="btn edit-btn">編集</a></td>
-                            <td><a href="delete.php?id=<?= h($task['id'])?>" class="btn delete-btn">削除</a></td>
+                            <td class="plan-title"><?= h($plan['title']) ?></td>
+                            <td><?= h(date("Y/m/d", strtotime($plan['completion_date']))) ?></td>
+                            <td><a href="done_cancel.php?id=<?= h($plan['id'])?>" class="btn not-done-btn">未完了</a></td>
+                            <td><a href="edit.php?id=<?= h($plan['id'])?>" class="btn edit-btn">編集</a></td>
+                            <td><a href="delete.php?id=<?= h($plan['id'])?>" class="btn delete-btn">削除</a></td>
                         </tr>
                     <?php endforeach ?>
                 </tbody>
