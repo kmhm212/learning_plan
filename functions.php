@@ -41,6 +41,56 @@ function findTaskByDate($date)
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
+function findById ($id) 
+{
+    $dbh = connectDb();
+    $sql = <<<EOM
+    SELECT
+        *
+    FROM
+        plans
+    WHERE
+        id = :id; 
+    EOM;
+    $stmt = $dbh->prepare($sql);
+    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+    $stmt->execute();
+    return $stmt->fetch(PDO::FETCH_ASSOC);
+}
+
+function updateTask ($id, $title, $date)
+{
+    $dbh = connectDb();
+    $sql = <<<EOM
+    UPDATE
+        plans
+    SET
+        title = :title,
+        due_date = :due_date
+    WHERE
+        id = :id;
+    EOM;
+    $stmt = $dbh->prepare($sql);
+    $stmt->bindParam(':title', $title, PDO::PARAM_STR);
+    $stmt->bindParam(':due_date', $date, PDO::PARAM_STR);
+    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+    $stmt->execute();
+}
+
+function updateValidate ($title, $date, $task) {
+        $errors = [];
+    if ($title == '') {
+        $errors[] = MSG_TITLE_REQUIRED;
+    }
+    if ($date == '') {
+        $errors[] = MSG_DATE_REQUIRED;
+    }
+    if ($title == $task['title'] && $date == $task['due_date']) {
+        $errors[] = MSG_NO_CHANGE;
+    }
+    return $errors;
+}
+
 function insertTask($title, $date) {
     $dbh = connectDb();
     $sql = <<<EOM
@@ -48,11 +98,11 @@ function insertTask($title, $date) {
         plans
         (title, due_date)
         VALUE
-        (:title, :date)
+        (:title, :due_date)
     EOM;
     $stmt = $dbh->prepare($sql);
     $stmt->bindParam(':title', $title, PDO::PARAM_STR);
-    $stmt->bindParam(':date', $date, PDO::PARAM_STR);
+    $stmt->bindParam(':due_date', $date, PDO::PARAM_STR);
     $stmt->execute();
 }
 
