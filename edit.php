@@ -40,6 +40,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </form>
             <a href="index.php" class="btn return-btn">戻る</a>
         </div>
-    
+    </div>
 </body>
 </html>

@@ -57,9 +57,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <!-- 未完了のデータを表示 -->
                     <?php foreach($notyet_tasks as $task): ?>
                         <tr>
-                            <td class=""><?= h($task['title']) ?></td>
+                            <td class="plan-title"><?= h($task['title']) ?></td>
                             <td <?php if($task['due_date'] < date("Y-m-d")) echo ('style="color: red"')?>>
-                                <?= h($task['due_date']) ?></td>
+                                <?= h(date("Y/m/d", strtotime($task['due_date']))) ?></td>
                             <td><a href="done.php?id=<?= h($task['id'])?>" class="btn done-btn">完了</a></td>
                             <td><a href="edit.php?id=<?= h($task['id'])?>" class="btn edit-btn">編集</a></td>
                             <td><a href="delete.php?id=<?= h($task['id'])?>" class="btn delete-btn">削除</a></td>
@@ -85,11 +85,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <!-- 完了済のデータを表示 -->
                     <?php foreach($done_tasks as $task): ?>
                         <tr>
-                            <td class=""><?= h($task['title']) ?></td>
-                            <td><?= h($task['due_date']) ?></td>
-                            <td><a href="" class="btn not-done-btn">未完了</a></td>
-                            <td><a href="" class="btn edit-btn">編集</a></td>
-                            <td><a href="" class="btn delete-btn">削除</a></td>
+                            <td class="plan-title"><?= h($task['title']) ?></td>
+                            <td><?= h(date("Y/m/d", strtotime($task['completion_date']))) ?></td>
+                            <td><a href="done.php?id=<?= h($task['id'])?>" class="btn not-done-btn">未完了</a></td>
+                            <td><a href="edit.php?id=<?= h($task['id'])?>" class="btn edit-btn">編集</a></td>
+                            <td><a href="delete.php?id=<?= h($task['id'])?>" class="btn delete-btn">削除</a></td>
                         </tr>
                     <?php endforeach ?>
                 </tbody>
