@@ -18,26 +18,28 @@ function connectDB()
     }
 }
 
-function findPlanByDate($date)
+function findPlanByDate($completion_date_null = false)
 {
     $dbh = connectDb();
-    $sql = <<<EOM
-    SELECT
-        *
-    FROM
-        plans
-    WHERE
-        completion_date IS 
-    EOM;
-    if ($date == 'NULL') {
-        $sql .= <<<EOM
-                NULL
+    if ($completion_date_null) {
+        $sql = <<<EOM
+            SELECT
+                *
+            FROM
+                plans
+            WHERE
+                completion_date IS NULL
             ORDER BY
                 due_date ASC;
             EOM;
     } else {
-        $sql .= <<<EOM
-                NOT NULL
+        $sql = <<<EOM
+            SELECT
+                *
+            FROM
+                plans
+            WHERE
+                completion_date IS NOT NULL
             ORDER BY
                 completion_date DESC;
             EOM;
@@ -137,9 +139,9 @@ function createErrMsg($errors)
     return $err_msg;
 }
 
-function dateColor($plan) {
+function changeDateColor($plan) {
     if($plan['due_date'] < date("Y-m-d")) {
-        echo 'class="expired"';
+        return 'class="expired"';
     }
 }
 

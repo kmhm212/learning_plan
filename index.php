@@ -4,10 +4,11 @@ require_once __DIR__ . '/functions.php';
 require_once __DIR__ . '/config.php';
 
 $notyet_plans = findPlanByDate(PLAN_DATE_NULL);
-$done_plans = findPlanByDate(PLAN_DATE_NOT_NULL);
+$done_plans = findPlanByDate();
 
 $title = '';
 $date = '';
+$errors = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $title = filter_input(INPUT_POST, 'title');
@@ -17,6 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         insertPlan($title, $date);
         $title = '';
         $date = '';
+        header('Location: index.php');
     }
 }
 
@@ -60,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <?php foreach($notyet_plans as $plan): ?>
                         <tr>
                             <td class="plan-title"><?= h($plan['title']) ?></td>
-                            <td <?php dateColor($plan) ?>>
+                            <td <?= changeDateColor($plan) ?>>
                                 <?= h(date("Y/m/d", strtotime($plan['due_date']))) ?></td>
                             <td><a href="done.php?id=<?= h($plan['id'])?>" class="btn done-btn">完了</a></td>
                             <td><a href="edit.php?id=<?= h($plan['id'])?>" class="btn edit-btn">編集</a></td>
