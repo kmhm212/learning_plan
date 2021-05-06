@@ -19,6 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $title = '';
         $date = '';
         header('Location: index.php');
+        exit;
     }
 }
 
