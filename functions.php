@@ -129,6 +129,57 @@ function insertValidate($title, $date)
     return $errors;
 }
 
+function updateStatusToDone($id)
+{
+    $dbh = connectDb();
+    $sql = <<<EOM
+    UPDATE
+        plans
+    SET
+        completion_date = :com_date
+    WHERE
+        id = :id;
+    EOM;
+    $stmt = $dbh->prepare($sql);
+    $date = date("Y-m-d");
+    $stmt->bindParam(':com_date', $date, PDO::PARAM_STR);
+    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+    $stmt->execute();
+}
+
+function updateStatusToDoneCancel($id)
+{
+    $dbh = connectDb();
+    $sql = <<<EOM
+    UPDATE
+        plans
+    SET
+        completion_date = :com_date
+    WHERE
+        id = :id;
+    EOM;
+    $stmt = $dbh->prepare($sql);
+    $date = NULL;
+    $stmt->bindParam(':com_date', $date, PDO::PARAM_NULL);
+    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+    $stmt->execute();
+}
+
+function deletePlan($id)
+{
+    $dbh = connectDb();
+    $sql = <<<EOM
+    DELETE FROM
+        plans
+    WHERE
+        id = :id;
+    EOM;
+
+    $stmt = $dbh->prepare($sql);
+    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+    $stmt->execute();
+}
+
 function createErrMsg($errors)
 {
     $err_msg = "<ul>\n";
